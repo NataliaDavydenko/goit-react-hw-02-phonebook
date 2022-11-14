@@ -21,9 +21,10 @@ export class App extends Component {
 
   formSubmit = data => {
     const id = nanoid();
+    const isExist = this.state.contacts.find(contact => contact.name === data.name);
+    
     if (
-      this.state.contacts.filter(contact => contact.name === data.name).length >
-      0
+      isExist
     ) {
       alert(`${data.name} is already in contacts`);
       return;
@@ -40,22 +41,23 @@ export class App extends Component {
     });
   };
 
-  reset = () => {
-    this.setState({ filter: '' });
-  };
-
   onClickDelete = id => {
     this.setState({
       contacts: this.state.contacts.filter(contact => contact.id !== id),
     });
-    this.reset();
   };
 
-  render() {
+  getVisibleContacts = () => { 
     const filterNormalize = this.state.filter.toLowerCase();
-    const visibleContacts = this.state.contacts.filter(contact =>
+    return this.state.contacts.filter(contact =>
       contact.name.toLowerCase().includes(filterNormalize)
     );
+  }
+
+  render() {
+    
+    const visibleContacts = this.getVisibleContacts();
+
     return (
       <Main title="Phonebook">
         <ContactForm onChange={this.handleChange} onSubmit={this.formSubmit} />
